@@ -1,0 +1,249 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _05._04
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //05.04
+
+            uint a = 0xf00000ff; //12 adet
+            int adt = 0;
+            uint b = 1;//maske
+
+            for (int i = 0; i < 32; i++)
+            {
+                //if ((a & 1) == 1) adt++;
+                //a >>= 1;
+                if ((a & b) != 0) adt++;
+                b <<= 1;
+            }
+            Console.WriteLine(adt);
+            Console.WriteLine(bitsayısı(0xff));
+            Console.WriteLine(bitsayısı(0xfd));
+             a = 0xf00000ff; //12 adet
+             b = 1;//maske
+            Console.WriteLine(bitsayısı(a,b));
+
+            //---------------------------------
+
+            //binary sayısının 10luk sayı sistemindeki karşılığı
+            a = 0xf00000ff;
+            //f00000ff
+            //1111 0000 0000 0000 0000 0000 1111 1111
+            //0000 0000 0000 0000 0000 0000 0000 0001        bu değeri sabit
+            //                                       
+
+            //1 1 0 1 sayımız olsun 
+            //8 4 2 1 değerleri
+
+            //a = 0xf00000ff;
+
+            uint çarpan = 1;
+            uint sayı = 0;
+            for (int i = 0; i < 32; i++)
+            {
+                if ((a & 1) == 1) sayı = sayı + çarpan;
+                //0'a eşitse işlem yapmıyoruz
+                a >>= 1; // sayımızın kendisi
+                çarpan = çarpan * 2;//katlanarak gittiği için
+            }
+            Console.WriteLine(sayı); //4026532095
+            //şimdi bunun recursive halini kodlayalım
+            sayı = 0xf00000ff;
+            b = 0x80000000;
+            Console.WriteLine(onlu_sayı_sistemi(sayı,b,1));
+
+            //------------------------------------
+
+            a = 0xff;
+            b = 0xff;
+            adt = 0;
+            //a==b?
+            for (int i = 0; i < 32; i++)
+            {
+                if ((a & 1) == (b & 1)) adt++;
+                else break; //yaparsak herhangi bir eşitsizlikte
+                            //foru direkt kırar daha iyi olur
+                a >>= 1;
+                b >>= 1;
+            }
+            if (adt == 32) Console.WriteLine("eşit");
+            else Console.WriteLine("değil");
+            //ŞİMDİ RECURSİVE İLE ÇÖZELİM
+            a = 0xff;
+            b = 0xff;
+            Console.WriteLine(kıyaslama(a,b));
+            //çıktı 1 olur
+
+
+            //------------------
+
+            //yeni soru
+
+            a = 0xfbfbfbfb;
+            Console.WriteLine(a);
+            //32 bitlik bir sayının en yüksek dört bitini
+            //b sayının 4 bitine atayınız
+            b = 0x1bfbfbfb;
+            b = b & 0x0fffffff; //b sayısının son dört bitini sıfırlamış olduk
+            //0000xxxxxx
+            b = b | (a & 0xf0000000); //a'nın son dört bitini aldık
+                                      //daha sonra b ile orlama yaparak
+                                      //b=0000 1111 1111 ....
+                                      //a=1111 0000 0000 .... //diğer bitler değişmesin diye
+                                                             //o bitleri maske yardımıyla 0ladık
+                                      //orlayınca
+                                      //b=1111 1111 1111 .... olur
+            Console.WriteLine(b);
+            //b sayısınının 4 bitini ayarladığımızda a sayısı ile aynı oldu
+            //çünkü geri kalanlar zaten aynıydı
+
+            //---------------------------
+
+            //a sayısının en yüksek dört bitini
+            //b ye ata
+            b = 0;
+            b = b | (a >> 28);
+            Console.WriteLine(b);
+
+            //------------------------
+
+            a = 0x1230123;
+            //sağdan itibaren 13, 14, 15, 16. bitlerini +1 yapalım
+            //0001 0010 0011 0000 0001 0010 0011
+            //o btilere +1 yapmak 
+            //0000 0000 0000 0001 0000 0000 0000
+            //  0   0    0    1     0   0    0 
+
+            a = a + 0x1000; 
+            Console.WriteLine(a);
+            //
+            a = 0x1230123;
+            a =a|(((a & 0xf000) //o dört biti aldık geri kalanı 0ladık
+                >> 12) + 1) // daha sonra o bite +1 yaptık
+                << 12;  //ardından tekrar aynı yere götürüp
+                        //a ile orladık 
+                        //0000f000
+                        //    y
+
+            //bitwise işlemlerden soru var 
+            //hem test hem klasik olacak
+            //bilerek syntax hatası yapmış hoca
+            
+            //--------------------------------------------
+
+            a = 3;
+            b = 7;
+            uint c = 8;
+            uint d = 0;
+            // d değişkeninin ilk 5 bitine a;
+            // 20 ile 23. bitlerine b;
+            //en yüksek seviyeli 3 bitine c sayılarını aktarınız
+            //bu recursive olmaz çünkü komut 
+            //metot ile yapılır
+
+            d = d & 0xffffffe0;
+            Console.WriteLine(d);
+            //..111111 1110 0000 ilk 5 biti sıfırladık
+
+            d = d & 0xff87ffff;//20-23.bitleri sıfırladık
+                               //1111 1111 1000 0111 1111 1111 1111 maskemiz
+
+            d = d & 0x1fffffff;
+            //en yüksek 3 bit dediği için 0001 111....
+            //bizim d değerimiz zaten 00000 olduğu için
+            //sıfırlama diğer sorulara örnek olsun diye oldu
+            //yazılacak yerler boş oldu şuan
+            
+            d = d | a; //d=d+a;
+            
+            d = d | (b << 20);
+            
+            d = d | c << 28;
+            
+            Console.WriteLine(d);
+
+            //cevap=2154823683
+
+            //substring ve kümeler
+            string s = "1234";
+            a = (uint) Convert.ToInt32(s);
+            int carpan = 1;
+            int sayi = 0;
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                sayi = sayi + carpan * (s[i] - '0'); //ascıı değerlerinden
+                                                     //dolayı '0' yaptık
+                carpan = carpan * 10;
+            }
+            //şimdi bunu recursive hesaplayalım
+
+            //ASCII METODUNDA TANIMLADIM
+
+
+            Console.Read();
+        }
+        //şimdi recursive ile yapacağız bunları
+        static int bitsayısı(uint a)
+        {
+            if (a == 0) return 0;
+            //if ((a & 1) == 1) 
+            //     return 1 + bitsayısı(a >>1);
+            //else return 0 + bitsayısı(a >>1);
+
+            //ya da 
+            return (int)(a & 1) + bitsayısı(a >> 1);
+        }
+        //şimdi maskeyi hareket ettirerek recursive
+        //b maske
+
+        static int bitsayısı(uint a,uint b)
+        {
+            if (b == 0) return 0;
+            
+           // return ((a & b)!=0?1:0) //burada a ve b andlendiğinde sonuç
+                                    //0'dan farklıysa 1 değilse 0 gönder 
+             //   + bitsayısı(a,b<< 1);
+            //bunu yazamazsak 
+
+            if ((a & b)!=0)
+                 return 1 + bitsayısı(a, b << 1);
+            else return bitsayısı(a, b << 1);
+        }
+        static uint onlu_sayı_sistemi(uint a,uint b,uint çarpan)
+        {
+            //maskeyi kullanmadanki hali
+            //if (a == 0) return 0;
+            //return çarpan * (a & 1) + onlu_sayı_sistemi(a, çarpan*2);
+
+            //maskeyi de kullanırsak
+            if (b == 0) return 0;
+            return çarpan * (uint)((a & b)!=0?1:0 )
+                            //aslında burası if kısmı
+                + onlu_sayı_sistemi(a, b>>1 ,çarpan * 2);
+        }
+        static uint kıyaslama(uint a,uint b)
+        {
+            if (a == 0 && b==0) return 1;
+            if ((a & 1) == (b & 1)) return kıyaslama(a >> 1, b >> 1);
+            else return 0;
+            
+        }
+
+        static int ascıı(string s, int b, int leng)
+        {
+            if (leng >= s.Length) return 0;
+
+            return b * (s[leng] - '0') * ascıı(s, b * 10, leng + 1);
+        }
+        
+        
+    }
+}
