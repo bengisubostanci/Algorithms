@@ -1,0 +1,33 @@
+namespace kaçkeregeciyor
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string[] names = {"ali","hasan","can","ayşe","mustafa" };
+            string st = "alialiakljuhdakjhasanhasajadjkacanjadjk";
+            adedbulma(st, names[0]);
+            Console.Read();
+        }
+        static void adedbulma (string st,string isim)
+        {
+            int[,] lcs = new int[st.Length, isim.Length];
+            int maxlcs = 0;
+            //int adet = 0;
+            for (int i = 0; i < st.Length; i++)
+            {
+                for (int j = 0; j < isim.Length; j++)
+                {
+                    if (st[i] == isim[j])
+                    {
+                        if (i == 0 || j == 0) lcs[i, j] = 1;
+                        else lcs[i, j] = lcs[i - 1, j - 1] + 1;
+                        if (maxlcs < lcs[i, j]) maxlcs = lcs[i, j];
+                        
+                    }
+                }
+            }
+            Console.WriteLine(isim+" isminden "+maxlcs%isim.Length+"kadar vardır");
+        }
+    }
+}
