@@ -1,0 +1,210 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _17._05
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+
+            ///abcdefghi 9 harf input için alfabe
+            ///abc def ghi şeklinde gruplar
+            /// 1   2   3   grup numaralandırma
+            /// 
+            /// her gruptan sadece bir tane ve gruplar sırasıyla gelecek şekilde
+            /// örneğin adh olur
+            /// tek a; kabul olur mesela ama d; kabul olmaz çünkü d harfinden önce 1. gruptan bir harf gelmesi gerek
+            ///  d X kabul olmaz; hX kabul olmaz; adh olur ad olur
+            ///  123123123123... şeklinde ilerlemesi gerekir
+            ///  şuan q0dayız
+            ///  q0dayken abc gelirse q1; diğer duurmlarda red  
+            ///  q1deyken def q2; harici drumlar habul edilemz;
+            ///  q2deyken ghi q0 başa döner; diğer duurmlar reddeilir
+            ///  
+
+            string s1 = "abdhbdhaad";
+            int state = 0;
+            int[,] q = new int[4,9]; //q0,q1,q2 ve q3ölü state
+
+            for (int i = 3; i < 9; i++) //burayı i=3 yaprsak sadece defghi gelme durumunu inceler
+            {
+                q[0, i] = 3; //önce tamamını ölü stateye götürdük daha sonra istenilen değerler gelmesi durumunda 
+                             //tekrar revize ediyoruz
+            }
+            q[0,0]=1; //başlangıç durumunda a gelmesi
+            q[0,1]=1; //başlangıç durumunda b gelmesi
+            q[0,2]=1; //başlangıç durumunda c gelmesi
+
+            //////////////////////////////////////////////////////////////////
+
+            for (int i =0 ; i < 9; i++)
+            {
+                q[1, i] = 3; 
+            }
+            q[1,3]=2;
+            q[1,4]=2;
+            q[1,5]=2;
+
+            //////////////////////////////////////////////////////////////////
+
+            for (int i = 0; i < 9; i++)
+            {
+                q[2, i] = 3;  //buradaki i<9 yerine direkt i<6 da yapabiliriz fark etmez
+            }
+            q[2, 6] = 0;
+            q[2, 7] = 0;
+            q[2, 8] = 0;  //123 her gruptan bir değer aldığımız için tekrar başa döndürdü
+
+            /////////////////////////////////////////////////////////////////////
+            ///ölü stateteyken ne gelirse gelsin kendine geri döndürecek
+            ///ben bunu kendim kodlarken unuttum !!!!!!!!!!!!!!!!
+
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = q[state, s1[i] - 'a'];
+            }
+            if (state != 3) Console.WriteLine("oldu"); else Console.WriteLine("olmadı");
+
+            ///burada anlamadığım q0dayız a geldi sonra tekrar a geldi ve bunu kabul etmemiz gerekiyor ama 
+            ///forun içindeki q[1,i]=3; satırında ölü stateye attık 
+            ///ve bunun q[1,0]=0;  şöyle bir atamasını hiç yapmadık
+            ///
+            //////////////////////////////////////////////////////////////////////////
+            /// sonsuz uzunlukta 1 ve 0 da oluşan bir stringimiz var
+            /// bu sayının değerinin %5=2 yse kabul edilir değilse edilmez
+            /// sürekli büyüyen dinamik yapıda bir sayı
+            /// modüler aritmetikten faydalanacağız
+            /// q0 statei 5 ve 5in katları
+            /// q2 10, q2den sonra yani 10dan sonra 1 gelirse q0'a gideriz
+            /// 101101101101101101 bu sayının %5'e göre kalanı 0 dır
+            /// 111=7 q2'ye götürür kabul edilir
+            /// q1 bölümden 1 kalanı
+            /// q2 bölümden 2 kalanı
+            /// q3 bölümden 3 kalanı
+            /// q4 bölümden dört kalanı
+            /// q5 5in katlarını ifade eder
+
+            ///bu sorunun çizimini yaparken başladık
+            ///1-1;10-2;11-3;100-4;101-5;110-1; şeklinde değerlerin 5e modunda sonucunu yazdık
+            ///mesela hiç bir şey yokken 1 gelirse kalan 1 olurmuş q1 statesine gidermiş 
+            ///1 varken 0 gelirse kalan 2 olur ve q2 statesine gidermiş
+            ///örneğin 1001 sayısına sıra geldi tabloyu çizerken 1 geldi q1, 0 geldi q2, 0 geldi q4, sonra 1 
+            ///geldi kalan 4 olduğu için 100dan sonra 1 gelme durumu q4'e gider
+
+            q = new int[5, 2];
+            state = 0;
+            s1 = "10001011101";
+
+            q[0, 0] = 0;
+            q[0, 1] = 1;
+
+            q[1, 0] = 2;
+            q[1, 1] = 3;
+
+            q[2, 0] = 4;
+            q[2, 1] = 0;
+
+            q[3, 0] = 1;
+            q[3, 1] = 2;
+
+            q[4, 0] = 3;
+            q[4, 1] = 4;
+
+
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = q[state, s1[i] - '0'];
+            }
+            if (state == 2) Console.WriteLine("oldu"); else Console.WriteLine("olmadı");
+            //hoca derste if kısmını yanlış yazmış
+
+            ////////////////////////////////////////////////////////////////////
+
+            //hocanın kullandığı değer
+            //1001111111011
+
+            ///veri sıkıştırma
+            ///veri maliyetine olumlu etkisi vardır
+            ///tüm dosyalar tek boyutlu dizidir
+            ///temel taşını harfler-karakterler oluşturur
+            ///255 adet karakter var
+            ///her biri bir sayı ile ifade edilir
+            ///A,B,C...,Z , a..z, 0..9 ŞİÜĞÖ 
+            ///A 65 B 66 C 67
+            ///8 bit ASCII ile ifade edilir
+            ///her bir satırın sonunda 2 tane karakter vardır 
+            ///bunlar 12 ve 10 dur .txtler için
+            ///new line ve satır sonu 
+            ///mesela dosyamız
+            ///ABC
+            ///ABC
+            ///şeklindeyse arka planda ABCNSABCNS şeklindedir
+            ///iki tür karakter vardır printable multible
+            ///hard diskte alanlar 4kb 4kb olarak ayrılmıştuır
+            ///hoca amfi örneğini verdi 100 kişilik amfide 100 kişi de 20 kişide bulunabilri
+            ///amaç daha z yer kaplamak
+
+            ///huffmanda 
+            ///mesela 
+            /// AAAAAA olsun
+            /// 65  65  65  65  65 ->48bitlik yer işgal ediyor
+            /// 1   1   1   1   1    bunun yerine tek tip karakter var
+            /// A'yı 1 ile ifade edersek 1BİT*6=6BİT 
+            /// 
+            ///mesela AAAAABCD metni olsun elimizde 
+            ///A=00; B=01; C=10; D=11;
+            ///0000000000011011 = 16BİT HUFFMANA GÖRE
+            ///DİĞER TÜRLÜ 8*8=65 BİT OLURDU
+            ///%75 küçülttük
+
+            ///HUFFMAN'IN 2. kuralı
+            ///kullanılmayan karakterler yok sayılır kullanılan karakterlerle yeni bir ascıı 
+            ///tablosu oluşturulur
+            ///sıra numaraları ona göre verilir
+            ///çok fazla tekrar eden karakterleri daha az bitle ifaede edersek 
+            ///daha az yer kaplar
+            ///A=0; B=101; C=100; D=111; 14 bit 
+            ///16 biti 14 bite %10 düşürdük
+            ///frekansı yüksek olan karakterlerin bit karşılığını küçük yapalım demiş huffman
+            ///
+
+            ///HEADER 
+            ///veri sıkıştırılacak 
+            ///dosyayı bulduk ve frekansları çarptık
+            ///20 karakter olsun 
+            ///A..J 
+            ///sıkıştırılan dosyayı geri açmak için karakterlerin karşılığının bilinmesi gerkiliyor
+            ///bunun için header kullanırız 
+            ///header ön bilgi bölümü
+            ///orada karakterlerin karşılıının bilgisi verir
+            ///dosya uzunlupuna etki eder
+            ///
+
+            ///HUFFMAN TREE OLUŞTURULMASI
+            ///frekanslar alınır
+            ///yani her bir harf ne kadar kullanılmış
+            ///
+
+            string s = "abcabbbbbbcdbd";
+            int[] f = new int[6];
+            for (int i = 0; i < s.Length; i++)
+            {
+                f[s[i] - 'a']++; // frekans bu şekild ebulunur
+            }
+
+
+
+
+
+            Console.Read();
+
+
+
+        }
+    }
+}
