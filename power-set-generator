@@ -1,0 +1,204 @@
+namespace _12._04
+{
+    class Program
+    { 
+
+        //12.04
+        
+
+         
+        static void Main(string[] args)
+        {
+            //kümeler
+            //a,b,c 3 elemanlı bu kümenin tüm alt kümeleri
+            //a,b,c,ab,abc,bc,ac 2^n-1=7
+
+            string kume = "abc";
+            for (int i = 1; i < 8; i++)//2^n-1 den 8
+            {
+                int tmp = i;
+                for (int j = 0; j < 3; j++)//kümenin eleman sayısından
+                {
+                    //abc
+                    //001;c      
+                    //010;b      
+                    //100;a
+                    
+                    if((tmp&0x4)!=0) //4 olma sebebi 3 eleman var 
+                                     // maskemiz 100 olacak
+                                     //bu yüzde 0x4
+                        Console.Write(kume[j]);
+
+                    tmp <<= 1; // her elemanı tek tek kontrol etmek için
+                }
+                Console.WriteLine();
+            }
+
+            //----------------------------
+            //şimdi ise temp sabit kalsın maskeyi shift edelim
+
+            // a eklenir
+            //sonra b ve ba
+            //c cb cba (c'nin kendisi+her biriyle yan yana gelmesi gerek)
+
+            kume = "abc";
+            for (int i = 1; i < 8; i++)//2^n-1 den 8
+            {
+                int tmp = 1; // 1 en sağ demek
+                //bu yüzden foru 2den başlatırız
+                //çünkü ilk bakacağı bit en sağdaki yani
+                //kümenin sonuncu elemanı olacaktır
+                for (int j = 2; j >= 0; j--)//kümenin eleman sayısından
+                {
+                    //abc
+                    //001;c      
+                    //010;b      
+                    //100;a
+
+                    if ((tmp & i) != 0) //4 olma sebebi 3 eleman var 
+                                          // maskemiz 100 olacak
+                                          //bu yüzde 0x4
+                        Console.Write(kume[j]);
+
+                    tmp <<= 1; // her elemanı tek tek kontrol etmek için
+                }
+                Console.WriteLine();
+            }
+
+            // ya da 
+            //------------------------------------
+
+            kume = "abc";
+            for (int i = 1; i < 8; i++)//2^n-1 den 8
+            {
+                int tmp = 0x4; 
+                for (int j = 0; j < 3; j++)
+                {
+
+                    if ((tmp & i) != 0) 
+                        Console.Write(kume[j]);
+
+                    tmp >>= 1; 
+                }
+                Console.WriteLine();
+            }
+            //şimdi recursive
+            kumeyaz(1, kume);
+
+            //---------------------
+            int cnt = 0; //sayaç
+            kume = "abcdef";
+            for (int i = 1; i < 64; i++)//2^n-1 den 
+            {
+                int tmp = 0x20; //10 0000
+                for (int j = 0; j < 6; j++)
+                {
+
+                    if ((tmp & i) != 0)
+                        Console.Write(kume[j]);
+
+                    tmp >>= 1;
+                }
+                Console.WriteLine();cnt++;
+            }
+            Console.WriteLine(cnt); //63
+
+            /////////////////////////////////////
+            //
+            kume = "123456";
+            int[] dizi = { 1, 2, 3, 4, 5, 6 };
+            Console.WriteLine("-------------------------");
+            ///tüm alt kümelerden
+            ///alt küme toplamı 10 olan kaç adet alt küme vardır
+            ///mesela 6-4, 1-2-3-4, 1-4-5....
+            ///
+            int ctr = 0;
+            for (int i = 1; i < 64; i++)//2^n-1 den 64
+            {
+                int tmp = 0x20; //...10 0000 6elamanlı
+                                //en soldan başladık kontrole
+                int toplam = 0;
+                for (int j = 0; j < 6; j++) //eleman sayısı
+                {
+                    
+                    if ((tmp & i) != 0)
+                       // Console.Write(kume[j]);
+                        toplam += dizi[j];
+
+                    tmp >>= 1;
+                }
+                
+                
+                if (toplam == 10) 
+                {
+                    // toplamı 10 yapan
+                    // elemanları yazdırma ve sayacı arttırma
+                    Console.WriteLine("-----");
+                    ctr++;//sayaç, tane
+                    tmp = 0x20;
+                    for (int j = 0; j < 6; j++)
+                    {
+                        if ((tmp & i) != 0)
+                            Console.Write(kume[j]);
+                        tmp >>= 1;
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("-----");
+                }
+                //şimdi hangi değerler diye görmek için ekrana bastıracağız
+               
+                
+            }
+            Console.WriteLine(ctr +"tane eleman bulunmakta toplamı 10 olan");
+
+            //50 elemanlı alt küme toplamı 2000 olan elemanlar 
+
+            //sonucuna problemi çözmeden yorum yapılamayan problemlere
+            //np-hard problemler denir
+            /// polynomial->np alt kümesidir
+            /// np-hard polinom zamanda çözülür
+            /// yapayzeka,
+            /// backtracking ( tüm ihtimalelrini hesaba katmadan
+            /// sadece işimize yarayacak olanların kullanılmasıdır)
+            /// mesela 100 elemanımız var ve alt kümeleri toplamını 20 istiyoruz 
+            /// 20den büyükleri kullanmak mantıksız olur 
+            /// çözüm ihtimali olmayan bölgelere gidilmez
+            /// 
+
+            Console.WriteLine("-------------------------------");
+            kume = "abc";
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    for (int k = 0; k < 2; k++)
+                    {
+                        if (i == 1) Console.Write(kume[0]);
+                        if (j == 1) Console.Write(kume[1]);
+                        if (k == 1) Console.Write(kume[2]);
+                        Console.WriteLine();
+                    }
+                }
+            }
+            Console.Read();
+        }
+
+        //şimdi recursive ile yapalım
+        static void kumeyaz(int sayı,string kume)
+        {// sayı olarak 1 gönderdik 001
+            if (sayı > 7) return;
+            int tmp = 0x4;
+            for (int j = 0; j < 3; j++)
+            {
+
+                if ((tmp & sayı) != 0)
+                    Console.Write(kume[j]);
+
+                tmp >>= 1;
+            }
+            Console.WriteLine();
+            kumeyaz(sayı + 1, kume);
+
+        }
+    }
+}
