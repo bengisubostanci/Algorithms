@@ -1,0 +1,92 @@
+namespace _06._03
+{
+    class Program
+    {
+        //
+        //NORMAL FİBONACCİ ÇÖZÜMÜ
+        //static int FinonacciSerisi(int n)
+        //{
+        //    int ilksayı = 0, ikincisayi = 1, sonuc = 0;
+        //    //ilk sayı değeri ile ikinci sayı değeri sabit önce bunların kontrollerini yapıyoruz
+        //    if (n == 0) return 0;
+        //    if (n == 1) return 1; //girilen değer 1 veya 0 ise o değerleri döndürecek
+
+        //    for (int i = 2; i <=n; i++)
+        //    {
+        //        //ilk iki terim sabit olduğu için 2den başlattık
+        //        sonuc = ilksayı + ikincisayi;
+        //        ilksayı = ikincisayi;
+        //        ikincisayi = sonuc;
+
+        //    }
+        //    return sonuc;
+        //} 
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine("fibonacci serisinin boyutunu giriniz: ");
+        //    int length = Convert.ToInt32(Console.ReadLine());
+        //    for (int i = 0; i < length; i++)
+        //    {
+        //        Console.Write("{0} ",FinonacciSerisi(i));
+        //    }
+        //    Console.ReadLine();
+        //}
+
+        //recursive fibonacci
+        //static int FinonacciSerisi(int n)
+        //{
+        //    //int ilksayı = 0, ikincisayi = 1, sonuc = 0;
+        //    //ilk sayı değeri ile ikinci sayı değeri sabit önce bunların kontrollerini yapıyoruz
+        //    if (n == 0) return 0;
+        //    if (n == 1) return 1; //girilen değer 1 veya 0 ise o değerleri döndürecek
+
+        //    //for (int i = 2; i <= n; i++)
+        //    //{
+        //    //    //ilk iki terim sabit olduğu için 2den başlattık
+        //    //    sonuc = ilksayı + ikincisayi;
+        //    //    ilksayı = ikincisayi;
+        //    //    ikincisayi = sonuc;
+
+        //    //}
+        //    return FinonacciSerisi(n - 1) + FinonacciSerisi(n - 2);
+        //}
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine("fibonacci serisinin boyutunu giriniz: ");
+        //    int length = Convert.ToInt32(Console.ReadLine());
+        //    for (int i = 0; i < length; i++)
+        //    {
+        //        Console.Write("{0} ", FinonacciSerisi(i));
+        //    }
+        //    Console.ReadLine();
+        //}
+
+        //kullanıcının girdiği değerinci elemanı göstermek
+
+        static int FinonacciSerisi(int n)
+        {
+            //int ilksayı = 0, ikincisayi = 1, sonuc = 0;
+            //ilk sayı değeri ile ikinci sayı değeri sabit önce bunların kontrollerini yapıyoruz
+            if (n == 0) return 0;
+            if (n == 1) return 1; //girilen değer 1 veya 0 ise o değerleri döndürecek
+
+            //for (int i = 2; i <= n; i++)
+            //{
+            //    //ilk iki terim sabit olduğu için 2den başlattık
+            //    sonuc = ilksayı + ikincisayi;
+            //    ilksayı = ikincisayi;
+            //    ikincisayi = sonuc;
+
+            //}
+            return FinonacciSerisi(n - 1) + FinonacciSerisi(n - 2);
+        }
+        static void Main(string[] args)
+        {
+            Console.WriteLine("fibonacci serisinin kaçıncı elemanını giriniz: ");
+            int sayı = Convert.ToInt32(Console.ReadLine());
+            sayı -= 1; //kaçıncıyı indexe dönüştürdük
+            Console.WriteLine(FinonacciSerisi(sayı));
+            Console.ReadLine();
+        }
+    }//01123
+}
