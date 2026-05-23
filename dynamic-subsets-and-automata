@@ -1,0 +1,253 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _20._04
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ///0  0  0
+            ///0  0  1
+            ///0  1  0
+            ///0  1  1 
+            ///1  0  0
+            ///1  0  1
+            ///1  1  0
+            ///1  1  1
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    for (int k = 0; k < 2; k++)
+                    {
+                        if (i == 1) Console.Write("a");
+                        if (j == 1) Console.Write("b");
+                        if (k == 1) Console.Write("c");
+                        Console.WriteLine("");
+                    }
+                    //en alttaki işini bitirince en yukaarıdakini bir arttır
+                }
+            }
+
+            ///bunun yerine 
+            ///4 elemanlı bir kümenin tüm alt kümelerini yazan kod
+            int[] x = new int[5];//4 elemanlı fazladan 1 eleman
+                                 //ekledi hoca indexle alakalı
+                                 //eleman sayısından bir fazlası
+
+                                 //0 1 2 3 elemanları olsun
+            while (x[4]==0)//4=eleman sayısı,
+                           //100 elemanlı dizi derse burası 101
+            {
+                for (int i = 0; i < 4; i++) //4=eleman sayısı
+                    // 100 elemanlı dizi derse burada i<100
+                {
+                    if (x[i] == 1) Console.Write(i);
+                }
+                Console.WriteLine("");
+                x[0]++;
+                int lvl = 0;
+                while (x[lvl]==2)
+                {
+                    x[lvl] = 0;
+                    lvl++;
+                    x[lvl]++;
+
+                }
+            }
+            ///0 0 0 0 
+            ///1 0 0 0 lvl=0
+            ///x[0] =? 2 hayır
+            ///daha sonra x[0]=1 eşit olduğundan 0'ı ekrana yazdırıdm
+            ///binaryde 0 1 olduğu için == mi 2 yaparız
+            ///2 0 0 0
+            ///0 1 0 0 burada ekrana 1 yazar
+            ///1 1 0 0 tekrar başa dönerim
+            ///0 ve 1i ekrana yazdırırım 
+            ///2 1 0 0
+            ///0 2 0 0  lvl güncel değer 1
+            ///burada whileın içine tekrar bakılır 
+            ///ve 1. indexe sahip eleman 2 olduğu için while'ın içine girer
+            ///0 0 1 0    lvl 3 olur ve 3. indexi kontrol etmeye başlarız
+            ///başa döner forda ekrana 2 yazdırır yani 3. indexi ve bu şekilde
+            ///ilerler 
+            ///
+            ///
+
+            ///------------------------------------
+            int a = 1234;
+            string s = "";
+            /// 1234-1234/10*10=1234-1230=4
+            /// 123-123/10*10=123-120=3
+            /// 12-12/10*10=12-10=2
+            /// 1
+            /// bunun kodlamasına gelelim
+            while (a>0)
+            {
+                s =  (char)((a - a / 10 * 10) + '0') +s; //tersten ilerlediğimiz 
+                ///için böyle olması gerkiyor
+                ///4
+                ///34
+                ///234
+                ///1234
+                ///old. için başına ekleyerek ilerliyor
+                a = a / 10;//strye döndürdüğümüz basamağı silmek gibi
+                ///tırnak içinde sıfıla toplandığında
+                ///0'ın ascıı başlangıcı ile toplandığında stringe
+                ///döndürmüş olduk
+                ///Bir değeri tırnak içerisinde "0" ile toplamak,
+                ///bu değeri string (metin) veri tipine
+                ///dönüştürerek toplama işlemini gerçekleştirir. 
+            }
+            Console.WriteLine("s değeri:"+s); //1234
+
+            //////////////////////////////////////////////////////////
+            string s1 ="abcdefghjkl";
+            string s2 ="abxfgdhjkq";
+            ///ortak substringlerini bulalım
+            ///ab,fg,h,d,hjk
+            ///2 stringin en uzun ortak substringlerini bulalım
+            ///
+            ///longest common substring
+            ///
+
+            //excel üzerinde mantığını yaptık
+
+            int[,] lcs = new int[s2.Length, s1.Length];
+            int maxlcs = 0;
+            for (int i = 0; i < s2.Length; i++)
+            {
+                for (int j = 0; j < s1.Length; j++)
+                {
+                    if (s2[i] == s1[j])
+                    {
+                        if (i == 0 || j == 0) lcs[i, j] = 1;///çünkü satır ve 
+                                                            //sütunların ilkinde sol çarparaza
+                                                            //bakılmayacak
+                                                            //yani eşitlik durumunda satır ve sütunlarda
+                                                            //direkt 1 yazılması
+                        else lcs[i, j] = lcs[i-1, j-1]+1;
+                        if (maxlcs < lcs[i, j]) maxlcs = lcs[i, j];
+                    
+                    }
+                }
+            }
+            Console.WriteLine(maxlcs); //çıktı 3
+            if (maxlcs == s2.Length) Console.WriteLine("bulundu") ; //yani kelimenin tamamının
+                                                                    //uzunluğunda s1 de var mı
+            else Console.WriteLine("bulunamdı");
+            //s2=abcdefxfgdhjkq olursa çıktı 7 olur
+
+            //bunun bigOsu n*m
+
+            /////////////////////////////////////////////////
+            //palindromik
+
+            s1 = "ahmet 12321 adet mum satsana";
+            s2 = "anastas mum teda 12321 temha";
+            //en büyük ortak substring 12321 ve mum
+            //bunun cevabı 7 (2 tane boşluk karakteri)
+
+            //bir stringin içerisinde başka bir string var mı
+
+            //s1'in içerisinde satsana var mı onu arayacağız
+
+            s2 = "satsana"; //olursa ve s1de ararsak 138-139.satırlar
+            //////////////////////////////////
+            //farklı bir çözüm
+            s1 = "abfabcdefgh";//a=0,b=1,c=2,d=3,e=4
+            s2 = "abc";
+
+            //gömülü sistemlerde kullanılır
+            int[,] q = new int[4, 40]; //birinci değer state sayısı
+            int state = 0;
+            q[0, 0] = 1;//a
+            q[1, 1] = 2; q[1, 0] = 1;
+            //b ; 1deyken b gelirse bye gieriz 2ye
+            //yani a'dayken gelirse tekrar
+            // a gelirse geri kendisine döner
+            q[2, 2] = 3; q[2, 0] = 1;
+            //c duruyoruz  //2deyken c gelirse 3e
+            //gideriz
+
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = q[state, s1[i] - 'a'];
+                //*******mevcut stateyken
+                //a'yı sayıya dönüştürmek
+                ///için 'a' yazdık
+                if (state == 3) { Console.WriteLine("bulundu");
+                    break; }
+            
+            }
+            ///her ab'den sonra c gelmeli eğer c gelmez 
+            ///ve ab tekrar gelirse string kabul edilmeyecek
+            ///hemen gelmek zorunda değil
+            ///qwqwqwqwq
+            ///sssss
+            ///aaaa
+            ///resmini dosyaya kaydettim
+            ///
+
+
+            s1 = "abfabdcdefgh";
+            s2 = "abc";
+
+
+            int[,] q1 = new int[5, 40];//ikinci değer index no 
+            //gibi düşündüm hep
+            //birinci değerler yani stateler o daireler oluyor
+            //konum gibi
+            state = 0;
+            //for (int i = 0; i < 40; i++)
+            //{
+            //    q[1, i] = 0; //bunu tanımalamamıza gerke yok
+            //    //zaten biz tanımlamadığımız için 0 olur
+            //}
+            q1[0, 0] = 1;//a //0'dayken 0 gelirse 1'e git
+            q1[1, 1] = 2; 
+            
+            for (int i = 0; i < 40; i++)
+            {
+
+                q1[2, i] = 2; 
+                //c ve a hariç gönderilen her şey burada döner
+
+            }
+            q1[2, 2] = 0;//2deyken c gelirse 0'gideriz
+            q1[2, 0] = 3;//yani ab'den sonra tekrar a gelirse
+            for (int i = 0; i < 40; i++)
+            {
+                q1[3, i] = 2; //yani 3deyken ne gelirse gelsin
+                             //2'ye gönderdik yani b'nin
+                             //olduğu yere
+                             //a ardından b
+                             //ya da a gelirse zaten forun
+                             //dışında onu tanımladık 
+            }
+
+            q1[3, 0] = 0;
+            q1[3, 1] = 4;
+            q1[3, 2] = 0; //3deyken c gelirse
+                          //0'a gider
+
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = q1[state, s1[i] - 'a'];
+                if (state == 4)
+                {
+                    Console.WriteLine("dead state");
+                    break;
+                }
+
+            }
+            if (state == 2) Console.WriteLine("ret");
+            //state konum
+            Console.Read();
+        }
+    }
+}
