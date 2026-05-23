@@ -1,0 +1,262 @@
+namespace _10._05
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //state önemli
+            //4(1/1-1/3+1/5-1/7+1/9-1/11.........)
+            ///bu serinin ilk 10000 teriminin toplamını bulalım
+            ///high 1 
+            ///paydalar tek sayı paylar 1
+            ///
+
+            double toplam = 0;
+            int f = 1;
+            for (int i = 1; i < 10000; i=i+2)
+            {
+                toplam = toplam +(double)1 / i*f;
+                f = f * -1;
+            }
+            Console.WriteLine("toplam "+toplam*4);
+            // çıktı 3,14139265359179 pi sayısının 10k terimini hesapladık
+
+            //----------------------------------
+            ///longest common subsequense
+            ///arada boşluklar var onları kaldıırnca substringe dönecek şekilde
+            ///abcd
+            ///a111c222d 
+            ///sequnse olara acd oluyor
+
+            //excelde yaptığımızdaki satır ve sütunları biz keyfi belirliyoruz
+            /// eğer eşit değilse solundakinden ve üstündekinden hangisi büyükse o değeri yazarız
+            /// eğer solu yoksa sadece üsütndeki değeri yazarız
+            /// ama eşitse substringdeki gibi sol çaprazının +1ini aldık
+            /// 
+            ///    a   b   c   d   e   f
+            ///a   1   1   1   1   1   1
+            ///1   1   1   1   1   1   1
+            ///2   1   1   1   1   1   1
+            ///b   1   2   2   2   2   2
+            ///3   1   2   2   2   2   2
+            ///d   1   2   2   3   3   3
+            ///a   1   2   2   3   3   3
+            ///f   1   2   2   3   3   4
+            ///5   1   2   2   3   3   4
+
+            ///son satıra bakarak anlayabiliriz mesela a 1 adan var daha sonra b ye geçerken
+            ///artmış bu yüzden b de var c geçerken artmamış bu yüzden c yok 
+            ///böylelikle acdf olduğu yorumuna vardık
+
+            ///şimdi yukarıdaki örneği yapalım
+            ///1. matris oluşturacağız 
+            ///bu matrisin uzunluğu elemanların çarpımı kadardır
+            ///2. sonra döngü yapacağız
+
+            string s1 ="a66b6666c777777d";
+            string s2 ="a111c222d";
+            int[,] sequence = new int[s1.Length, s2.Length];
+            ///virgül atarak 2 elemanlı dizi 
+            //olduğunu belirlemiş olduk
+
+            int deger = 0;
+            for (int i = 0; i < s1.Length; i++)
+            {
+                for (int j = 0; j < s2.Length; j++)
+                {
+                    if (s1[i]==s2[j]) //Kenarlardeki hücrelerde bir eşitlik varsa
+                    {
+                        if (i == 0 || j == 0)
+                        {
+                            sequence[i, j] = 1;
+                        }
+                        else sequence[i, j] = sequence[i - 1, j - 1] + 1; // eğer köşede değilsek ve eşitlik varsa sol çaprazın +1i alınır
+
+                        if (deger < sequence[i, j]) deger = sequence[i, j];
+                    }
+                    else //eğer eşitlik yoksa
+                    {
+                        if (i==0 && j==0)
+                        {
+                            sequence[i, j] = 0; //en üst ve en sol hücrede eşitlik yoksa 0 yazarız, eşitlik olmadığı için zaten else durumuna geldik
+                        }
+                        else 
+                        {
+                            //şimdi eşitlik olmayan diğer hücrelere bakalım
+                            
+                            if (i==0||j==0) //bu ifle kenarlara bakıyoruz
+                            {
+
+                               if (i==0)
+                               {
+                                  sequence[i, j] = sequence[i, j - 1]; 
+                                    //zaten eşitlik yoktu burada satırları geziyorsak bir soldaki değeri alır  
+                                   //soldan transfer edecek
+                               }
+                               if (j==0)
+                               {
+                                  sequence[i, j] = sequence[i-1, j]; //sütunları geziyoruz
+                                  //üstten transfer edecek eşit olmaması durumunda
+                               }
+                            }
+                            else //iç hücrelere geçtik
+                            {
+                                
+                                sequence[i, j] = max(sequence[i-1, j], sequence[i, j-1]);
+                                //solundakini ve üstündekini değerlendirip hangisi büüykse onu alma durumu
+                            }
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine(deger);
+            /////////////////////////////////////////
+
+            /// abcdef
+            /// de
+            /// soruda bize abcdef stringinin içinde de var mı denildi
+            /// longest common sub ile de bulunur ama bigo(s1.Lenght*s2.Lenght)i oldu bu da kullanışlı olmaz
+            /// state programlama ile yapacağız
+            /// q0 da d arıyoruz bulunca q1 için e arıyoruz
+            /// q1 d gelirse q1de kalmaya devam 
+            /// e gelirse q2ye gidilir
+            /// q2deyim herhangi bir işlem yapmama gerek yok ne gelirse gelsin 
+
+            int[,] q = new int[3, 10];
+            // buradaki 3 q0 q1 q2 den 3 tane olduğu için state sayılarını da 10 diye sınırladık abcde...
+            s1 = "abcdef";
+            s2 = "de";
+            int state = 0;
+            ///a b c d e f 
+            ///1 2 3 4 5 6 
+            q[0, 4] = 1; //eğer q0dayken 4 gelirse yani d, q1'e git
+            q[1, 5] = 2;
+            q[1, 4] = 1; //q1deyiz d gelirse yine 1e geliriz //hoca burada 2 yazdı amaa ben iki olduğunu düşünmüyorum
+
+            //q[1, 0] = 0;
+            //dizinin bu elemanlarını zaten başlangıçta 0'a ayarladığı için tekrar atamaya gerek yok
+            //q[2,0]=2; q[2,1]=2; demek yerine bir for içeriisnde tanımlıuoruz
+            for (int i = 0; i < 10; i++)
+            {
+                q[2, i] = 2;
+            }
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = q[state, s1[i] - 'a']; //ilk durumda state 0dı 
+                //0 durumunda yabi dyi bulmadı harf harf arama yaptık
+                ///daha sonra dyi bulunca 139. satırda zaten q yu 1e atıyor
+                ///ki forun içi q[0,4] olduğunda bunu yeni state atayacak güncel statemiz q[0,4] 
+                ///yani yukarıdaki atama değerine göre 1 olacak
+                ///bu for s1deki bütün elemanları statenin 0 1 2 oldupu duurmlarda da dönememizi sağlıyor
+            }
+            if (state == 2) Console.WriteLine("tamam"); else Console.WriteLine("olmadı");
+
+            ////////////////////////////////////////////////////////////////////////
+
+            /// abcabccccabcccccabcabc 
+            /// yani mutlaka abc olacak 
+            /// ve abden sonra en az 1 tane c gelecek
+            //a dan sonra a ya da c gelirse x
+            ///b den sonra b ya da a gelirse x
+            ///....
+            int[,] qq = new int[5, 3];
+            ///0 bulamama, 1 a gelmesi, 2 b gelmesi 3 c gelmesi, 4 ölü state 5 durum 3 harf var
+            ///istersek break yapıp kırarız ya da bir state daha ekleriz
+            ///a b c
+            ///0 1 2
+            s1 = "abccccccabcabccccabcccabc";
+            state = 0;
+            qq[0, 0] = 1;//başlangıç duurmunda a gelirse
+            qq[0, 1] = 4;//başlangıçta b gelmesi durumu
+            qq[0, 2] = 4;//başlangıçta c gelmesi durumu
+
+            qq[1, 0] = 4;//elimizde a varken a gelirse ölü state
+            qq[1, 2] = 4;
+            qq[1, 1] = 2;//elimizde a varken b gelmesi durumunda 2ye gideriz
+
+            qq[2, 0] = 4;//elimizde ab varken a gelmesi
+            qq[2, 1] = 4;//ab durumunda b gelmesi
+            qq[2, 2] = 3;//ab duurumunda c gelmesi
+
+            qq[3, 0]=1;//abc durumunda a gelirse 1inci state yani elimizde a bulunma duurmuna gideriz
+            qq[3, 1] = 4;// abc durumunda b gelemsi
+            qq[3, 2] = 3;//abc durumunda c gelmesi
+
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = qq[state, s1[i] - 'a'];
+            }
+            if (state == 3) Console.WriteLine("oldu"); else Console.WriteLine("olmadı");
+            //çıktı oldu olacak ama eğer bizim metnimiz ....abcccab şeklinde bitseydi state 2 olacağından olmazdı
+
+            // stringdeki çift sayıda 0 olması
+            /// içeriisnde 000 varsa kabul edilmeyecek 3 tane 0 ooması duurumu
+            /// çift sayıda 0 ve çift sayıda 1 olamsı
+            //////////////////////////////////////////////////////////// 
+            /// tek sayıncıdaki karakterlerin 1 olması 1. 3. 5. ....
+            ///bu soruyu anlamadım
+            q =new int[3, 2];
+            state = 0;
+            s1 = "1111111";
+            q[0, 0] = 2; ///0dayken, başlangıçtayken 0 gelmesi durumunda 2. state gidecek 
+                         ///bizim buradaki 2.statemiz tek hanelerde 0 gelmesi istemedğimiz durum
+            q[0, 1] = 1; ///başlangıçtayken 1 gelmesi yani ilk bas.ın 1 olması
+            q[1, 0] = 0; ///ikinci basamak kontolü burada 1 de 0 da gelse önemsiz başlangıç durumuna gidecek
+            q[1, 1] = 0;
+            q[2, 0] =2 ;
+            q[2, 1] = 2;
+            //alfabetik karakterlerde -'a', binaryde -'0'
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = q[state, s1[i] - '0'];
+            }
+            if (state != 2) Console.WriteLine("oldu"); else Console.WriteLine("olmadı");
+            ////////////////////////////////////////////////////////////////////////////
+            ///01 ve 10ları eşit sayıda kullanacağız
+            ///iki yuvarlaklar kabul noktaları diğer yuvarlaklar ise kabul edilmememe noktalarıdır
+            /////////////////////////////////////////
+            ///00 ve 11 olmayacak içinde
+            q = new int[4, 2];
+            state = 0;
+            s1 = "110101010101";
+            q[0, 0] = 1; //elimiz boşken 0 gelirse 1.durum 0 olma durumuna git
+            q[0,1]=2; //elimizde bir şey yokken 1 gelirse elimizde 1 olma durumu olan 2ye gider
+            q[1, 0] = 3; //elimizde 0 vakrn 0 gelirse ölü stateeye
+            q[1,1]=2;   //elimizde 0 varken 1 gelirse 1 olan stateye git
+            q[2,1]=3;   //elimizde 1 varken 1 gelirse ölü stateye gidewr
+            q[2,0]= 1;   //elimizde 1 varken 0 gelirse elimizde 0 olma durumu olan 1e gider
+            q[3, 0] = 3;
+            q[3, 1] = 3;
+            //kendim yazdım çalışıyor
+
+            for (int i = 0; i < s1.Length; i++)
+            {
+                state = q[state, s1[i] - '0'];
+            }
+            if (state != 3) Console.WriteLine("oldu"); else Console.WriteLine("olmadı");
+
+            //////////////////////////////////////////////////////////////////////////////////
+            ///regular expressiondan sorumlu değiliz 
+            ///pdfteki örn (1+110)*0 olan
+            ///dönüşebilen bir nfa sorulabilir dedi ????
+            ///nfa aynı anda birden fazla statede olmak
+            ///eğer öyleyse stateyi int tanımlamayazsın 
+            ///int tanımlarsan bitwise tanımlaarsın
+            ///for içinde 1 2 satır daha ekleriz 
+            ///dizi kullanılabilir .net'in  bitset'i vaar o kullanılabilir 
+            ///ya da 0. bit 1.bit diye hocanın anlattıklarını kullanabiliriz
+            ///şuan dfadayız
+
+
+
+            Console.Read();
+
+        }
+        static int max(int a,int b)
+        {
+            if (a > b) return a;
+            else return b;
+        }
+    }
+}
