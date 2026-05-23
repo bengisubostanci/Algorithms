@@ -1,0 +1,231 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _29._03_12._00
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //29.03
+
+            //bitwise
+            //& |
+            //0x00000123
+            //0000 0000 0000 0000 0000 0001 0010 0011
+            int a = 0x123;
+            int b = 0x00000123;
+            Console.WriteLine(a);
+            Console.WriteLine(b);
+
+            //yani a==b ve 291e eşit bu soru için
+            //int a = 11;
+            //MSB.......LSB
+            //sağdan itibaren ilk bitimiz 1 olsun
+            //1 1 1 1 0 0 0 0
+
+            //sağ taraftaki ilk bit ya da en sağ bit
+            //0 olarak değiştirelim 
+            //zarar görmeyecek ilk bit
+            //x and 0 = 0 , x and 1 = x MASKE
+            //herhangi bir sayının hrhangi bir bitinini değiştirmemiz
+            //gereken işlemlerde and ya da or kullanırız 
+            //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            //and
+            //11 1111 1111 1111 1111 1111 1111 1111 1111 1110 maskemiz bu 
+            //=
+            //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0
+            uint sayı = 11;
+            uint maske = 0xfffffffe;  //u intte rahat çalışabiliriz
+            sayı = sayı & (maske); //andliyoruz
+            //bunun çıktısı 10 
+
+            sayı = 0; //00000000 8 tane ve her birinin
+                      //4'er bitlik karşılığı var 
+                      //bu da 32 bit yapar
+            
+            sayı = ~sayı;//sayının değilini aldık
+                         //1111111111111111 
+                         //yani bütün bitlerin değilini aldık
+            Console.WriteLine(sayı); //çıktısı 4.294.967.295 
+                                     //32 tane 1
+                                     //00000000000000000000
+                                     //11111111111111111111
+                                     //anlamına geliyor
+            sayı = sayı | 0xf;//0xf==0x0000000f;
+                              //11111111111111111111
+                              //00000000000000001111 ile orladık
+                              //11111111111111111111 cevap değişmez yine aynıdır
+
+            //ama and olsaydı
+            //11111111111111111111
+            //00000000000000001111
+            //00000000000000001111 olurdu 
+            sayı = sayı & 0xf;
+            Console.WriteLine(sayı); //cevap 15 olurdu
+
+            //sola ve sağa shift(kaydırma)
+            //0101 sayımız var 
+            //sola shift etmek istedğimizde
+            //ali veli ayşe fatma
+            //veli ayşe fatma boş
+            //1 kere daha
+            //ayşe fatma boş boş
+            // fatma boş boş boş
+            //boş boş boş boş
+            //sola shift << işareti ile
+            Console.WriteLine("---------------------");
+            sayı = 1;
+            //000000000000000000001
+            //000000000000000000010
+            //sayı = sayı << 1; //ekrana 2 basar
+
+            for (int i = 0; i < 4; i++)
+            {
+                sayı = sayı << 1;
+                Console.WriteLine(sayı);
+                //0001 2
+                //0010 4 
+                //0100 8 
+                //1000 16
+            }
+            //sayının bir bit sola shift edilmesi 
+            //o sayının kendi tabanıyla çarpılması demek
+
+            //hoca burada stopwatch komutunu kullandı
+            //geçen süreyi hesaplıyor
+
+            //sağa doğru shift
+            sayı = 8;
+            //sayı = sayı >> 1;
+            //001000
+            //000100
+            //000010
+            //000001
+            //00000
+            //sola doğru çift çarpma
+            //sağa doğru shift bölme
+            Console.WriteLine("---------------------");
+
+            sayı = 0xffffffff;
+            for (int i = 0; i < 32; i++)
+            {
+                sayı = sayı >> 1;
+                Console.WriteLine(sayı);
+                
+            }
+
+            //--------------------------------
+            //tek mi çift mi bulma
+            //bitwise ile
+            //sayı maskelenir
+            //xxxxxxxxxxxxx
+            //0000000000001 AND
+            //000000000000x
+            //Eğer en düşük anlamlı bit 0 ise, sayı çift sayıdır.
+            //Eğer en düşük anlamlı bit 1 ise, sayı tek sayıdır.
+            if ((sayı&0x1)==1)
+            {
+                Console.WriteLine("tek");
+                //sayının en sağdaki bitini kontrol ediyoruz işte
+            }
+            else
+            {
+                Console.WriteLine("çift"); 
+            }
+
+            //sayımızın ilk 2 bitini diğer bitlere zarar vermeden 1 yapma
+            //maske kullanacağız
+            //zarar vermemek için or kullanacağız
+            //xxxxxxxxxxxxxx11
+            //xxxxxxxxxxxxxxxx
+            //0000000000000011
+            maske = 0x3; //11, 3 olduğu için
+            sayı = sayı | maske;
+
+            //3. bit 1; 9.bit 0; 12.bit 1 ve 28.bit 0 olsun
+            //3,12->1,9,28->0 olacak
+            //or kullanacağız
+            //1000 0000 0100 =804
+            maske = 0x804;
+            sayı = sayı | maske;//şuan 1leme işlemini yaptık
+
+            //and kullancağız
+            //1111 0111 1111 1111 1111 1110 1111 1111
+            //f     7    f    f    f     e   f    f
+            maske = 0xf7fffeff;
+            sayı = sayı & maske;
+            //ve sonuca ulaştık şuan
+
+            //sayı değişkeninin içeriisndeki bit değeri 1 olanların sayısı
+            //mesela sayımız 10101010000000000001 olsun
+            //bunu 000000000000001 ile andledik 
+            int adet = 0;
+            sayı = 0xffffffff;
+            for (int i = 0; i < 32; i++)
+            {
+                if ((sayı & 1) == 1) adet++;
+            }
+            Console.WriteLine(adet);
+
+            //ya da 
+            //sayı değerimiz işimize belki yarar diye 
+            maske = 1;
+            for (int i = 0; i < 32; i++)
+            {
+                if ((sayı & maske) != 0) adet++;
+                maske = maske << 1;
+            }//yani maske yardımıyla her biti kontrol ettik
+            Console.WriteLine(adet);
+
+            //İKİLİ SAYI SİSTEMİNE DÖNÜŞTÜRME
+            sayı = 0xf0f0f0f0;
+            //maskemiz 10000000000000000000000 şeklinde olacak bu yüzden
+            maske = 0x80000000; 
+            for (int i = 0; i < 32; i++)
+            {
+                if ((sayı & maske) != 0) Console.Write("1");
+                else Console.Write("0"); 
+                maske = maske >> 1;
+            }
+            Console.WriteLine(" ");
+            //diğer bir örnek
+            sayı = 0xabcdef;
+            
+            maske = 0x80000000; //yani maskemiz 10000000000000000
+            for (int i = 0; i < 32; i++)
+            {
+                if ((sayı & maske) != 0) Console.Write("1");
+                else Console.Write("0");
+                maske = maske >> 1;
+            }
+
+            //string ile çözme
+            string st = "";
+            for (int i = 0; i < 32; i++)
+            {
+                if ((sayı & maske) != 0) st=st+"1";
+                else st=st+"0";
+                maske = maske >> 1;
+            }
+            Console.WriteLine(st);
+
+            //a ve b sayıları aynı mı değil mi bitwise ile
+            // a sayısının ilk 4 bitini diğer bitlere zarar vermeden arttırın
+
+            uint a1 = 123;
+            uint a2 = 123;
+
+            for (int i = 0; i < 32; i++)
+            {
+                //hocanın bağlantısı kesildi
+            }
+            Console.WriteLine(st);
+
+            Console.Read();
+        }
+    }
+}
