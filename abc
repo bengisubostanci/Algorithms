@@ -1,0 +1,36 @@
+class Program
+    {
+        static void Main(string[] args)
+        {
+
+           // int[,] q = new int[10, 3];//şimdilik 10state tanımladım
+            int sayac_b = 0;
+            int adet_4 = 0;
+            string s1 = "acbcabaccaabbaacbcaabcac";
+            string s2 = "abc";
+            bool dogruluk = true;
+            for (int i = 0; i < s1.Length; i++)
+            {
+                adet_4++;
+                if (s1[i] == s2[1]) sayac_b++;
+                if (adet_4 == 4)
+                {
+                    if (sayac_b!=1)
+                    {
+                        dogruluk = false;
+                    }
+                    adet_4 = 0;
+                    sayac_b = 0;
+                }
+
+            }
+            if (dogruluk == false) Console.WriteLine("olmadı"); else Console.WriteLine("oldu");
+            Console.ReadLine();
+
+
+
+
+
+        }
+    }
+}
