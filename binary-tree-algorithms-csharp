@@ -1,0 +1,201 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _31._05
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            /// amacımız bu verileri sakladığımız alanı küçültmek
+            /// aaaabcd totalde 7 harf var ve her bir harf 8 bitten oluşur
+            /// toplam 56bitlik yer kaplar bu aaaabcd stringimiz
+
+            /// 1. kural 
+            /// karakterler kaç adet ise onu temsil eden bit kullanılmalı
+            /// mesela buradaki harfler için
+            /// a;00-b;01-c;10-d;11 seçebiliriz 
+            /// a'nın 00 olmasını keyfi belirledik önemli olan 2şer bitle temsil etmek?
+            /// artık 56 bit yerine 2*7=14 bit olarak yazabilriz
+            /// yani verilerin saklanırken tüm ihitmallere göre şekillenmesi
+
+            ///son düğümlerin çocukları yoktur
+
+            ///2.kural
+            ///az kullanılan çok bitle, çok kullanılan az bitle temsil edilmeli
+            ///freaknsı çok olan karakterler daha az bit ile temsil edilecek
+            ///a;1-b;01-c;000-d;001
+            ///111101000001 şekline dönmüş olur
+            ///bu haliyle 12 bite indirgenmiş olur
+            ///yani 14bitten 12 bite %10luk tasarruf yapmış olduk
+
+            ///huffman ne zaman verimli olmaz
+            ///1- havuzundaki karakter sayısı 8bit ile temsil edilecek seviyedeyse
+            ///2- frekanslar yakın olursa/aynıysa dosyayı sıkıştıramayız 
+            ///mesela(abcd'de frekanslar aynı)
+
+            ///huffman tree oluşturmak
+            ///aaaabcd metnini ele alalım
+            ///a=4;b=1;c=1;d=1 
+            ///önce bunları küçükten büyüğe doğru sıralarız
+            /// b-c-d-a şeklinde sıraladık bcd frekansları aynı onların yeri çok fark etmez
+            /// düşük olan 2 tane seçilir ve birleştirilir
+            /// yani burada b-c'yi birleştitirirsek frekans toplamları 2 oldu 
+            /// ve şimdi yeniden sıralayacağız
+            /// 
+            /// d-bc-a
+            /// 1 2  4
+            /// bcyi de şöyle ifade edicez
+            ///        bc
+            ///     b     c
+            ///şimdi tekrar bir birleştirme daha yapacağız
+            ///dbc-a
+            /// 3  4
+            ///      dbc
+            ///   bc     d
+            /// b   c
+            /// ve sıradaki toplama işleminde hepsi girmiş olur artık 
+            /// adbc 5 
+            /// bunu incelersek
+            ///                adbc
+            ///           dbc       a
+            ///        d       bc      
+            ///              b    c
+            /// şimdiyse sağa 1 sola 0 şeklinde ilerleyerek bit temsillerini yapalım
+            /// a=1; b=010; c= 011; d=00;
+
+            /// ilk adım oalrak btree sınfıını oluşturduk
+
+
+            string st = "aaaaaaaabcd";
+            ///frekans tanımlamaız gerekiyor
+            btree[] bt = new btree[4]; /// 4 satırdan oluşan btree dizisi tnaımladık a,b,c,d için 
+
+            int[] f = new int[4];
+            for (int i = 0; i < st.Length; i++)
+            {
+                f[st[i] - 'a']++; // bize frekansları verir
+            }
+
+
+            for (int i = 0; i < bt.Length; i++)
+            {
+                bt[i] = new btree(); //btree sınıfına ait nesne tanımladık
+                bt[i].data = f[i]; //frekanslarını atadık
+                bt[i].ch = 'a' + i; //bizde +1 nöde +i yazdı
+                                    //ama buranın i olması gerekiyor diğer türlü çıktıda hep b veriyor
+            }
+            ///hoca burada bt[0].data=1234; olarak atadı 
+            ///yani a'yı 1234 olarak atayıp düzenelendi?
+            bt[0].data = 1234;
+            Array.Sort(bt, (object x, object y) =>
+             {
+                 int a = 0;
+                 if (x == null && y == null) return 0;
+                 if (x == null) return 1; if (y == null) return -1;
+                 if (((btree)x).data < ((btree)y).data) a = -1;
+                 if (((btree)x).data > ((btree)y).data) a = 1;
+                ///x'in türü objectti bunu btree olarak değiştirdik
+                return a;
+
+             });
+            /// daha sonra huffman metodunu tanımladık
+
+            huffmantreeolustur(bt);
+            huffmanstryaz(bt[0], "");
+            huffmantreeyaz(bt[0]);
+            ///bunun çıktısı 
+            ///d 000
+            ///e 001
+            ///b 010
+            ///c 011
+            ///a 1
+            ///eğer d olmasaydı 2 bit ile temsil edilirdi dosya daha az yer kaplardı
+            ///ama geri dönüldüğünde dli hale gelemeyiz bu yüzden kayıplı sıkıştırma olmuş olur
+            ///kayıplı sıkıştırmada bazı veriler kaybolur
+            ///biizm amacımız zkayıpsız sıkıştırma
+            Console.WriteLine(st);
+            for (int i = 0; i < st.Length; i++)
+            {
+                Console.WriteLine(huffmanfind(bt[0],st[i]));
+            }
+
+            int x1 = 0xf;
+            Console.WriteLine(x1);
+            Console.Read();
+        }
+        class btree
+        {
+            public int data;
+            public int ch;
+            public string huffman;
+            public btree left;
+            public btree right;
+
+        }
+        static void huffmantreeolustur(btree[] bt)
+        {
+            ///sort edildiğinde en küçük iki elemanı 0. ve 1. indexte bulunur
+            if (bt[1] == null) return;// bütün elemanlar 1.elemanda toplanmışsa
+                                      // ve artık ikinci değerimizde null ise artık recursive
+                                      // yapıyı kırmış oluruz
+
+            btree b = new btree(); ///örneğin c ve d 'yi birleştirirken c ve d'nin üstüne cd bloğu oluşturmak gibi
+                                   ///       cd
+                                   ///     c    d
+            b.left = bt[0]; //bu oluşturduğumuz bloğun 1. elemanı sola baksın
+            b.right = bt[1]; //2. elemanı sağa baksın
+            b.data = bt[0].data + bt[1].data;//frekansları topladık
+            ///iki değeri birleştirdikten sonra tekine atayıp diğerini de null yaptıktan sonra
+            ///tekrar sort işlemini gerçekleştiriyoruz
+            ///sorttan sonra da null dğeri en sona gelir
+            bt[0] = b; //bu topladığımız bloğu 0. indexe taşıdık ve 
+            bt[1] = null; //1. indexi null'a çevirdik , dizilerden silme olmadığı için
+            Array.Sort(bt, (object x, object y) =>
+            {
+                int a = 0;
+                if (x == null && y == null) return 0; //nulları en sona atmak için
+                if (x == null) return 1; if (y == null) return -1;
+
+                if (((btree)x).data < ((btree)y).data) a = -1;
+                if (((btree)x).data > ((btree)y).data) a = 1;
+                return a;
+
+            });
+            huffmantreeolustur(bt);
+        }
+        static void huffmanstryaz(btree bt, string yon)
+        {
+            if (bt == null) return;
+            ///sağa1, sola0 yazma işelemini gerçekleştireceğiz
+
+            if (bt.left == null) bt.huffman = yon; ///ilk return çalışmadı bu yüzden sağa
+                                                   ///ya da sola gidecek demek
+            huffmanstryaz(bt.left, yon + "0"); ///burada sola gideceği için 0 yazdık     
+            
+            if (bt.right == null) bt.huffman = yon;
+            huffmanstryaz(bt.right, yon + "1");
+        }
+        static string huffmanfind(btree bt, int ch)
+        {
+            if (bt == null) return "";
+            if (bt.ch == ch) return bt.huffman;
+            return huffmanfind(bt.left, ch) + huffmanfind(bt.right, ch);
+
+        }
+        static void huffmantreeyaz(btree bt)
+        {
+            //şimdi ekrana yazdırmak var
+            if (bt == null) return;
+            if(bt.left==null)
+                Console.WriteLine("{0} {1}", (char)bt.ch,bt.huffman);
+            huffmantreeyaz(bt.left);
+            huffmantreeyaz(bt.right);
+            
+        }
+    }
+}
